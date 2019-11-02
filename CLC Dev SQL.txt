@@ -23,8 +23,10 @@ CREATE TABLE ETL_TESTING_LOG_TABLE
                 mismatch_count INTEGER,
                 mismatch_path VARCHAR(1000),
                 log_path VARCHAR(1000)
-)
+);
 
+
+USE Northwind;
 
 -- FACT_INVOICE
 select distinct b.ShipName, b.ShipAddress, b.ShipCity, b.ShipRegion, b.ShipPostalCode, b.ShipCountry, b.CustomerID, c.CompanyName, c.Address, c.City, c.Region, c.PostalCode, c.Country, concat(d.FirstName, ' ', d.LastName) as Salesperson, b.OrderID, b.OrderDate, b.RequiredDate, b.ShippedDate, e.ProductID, f.ProductName, e.UnitPrice, e.Quantity, e.Discount, e.UnitPrice * e.Quantity * (1 - e.Discount) as ExtendedPrice, b.Freight from Northwind.dbo.Shippers a inner join Northwind.dbo.Orders b on a.ShipperID = b.ShipVia inner join Northwind.dbo.Customers c on c.CustomerID = b.CustomerID inner join Northwind.dbo.Employees d on d.EmployeeID = b.EmployeeID inner join Northwind.dbo.Order_Details e on b.OrderID = e.OrderID inner join Northwind.dbo.Products f on f.ProductID = e.ProductID;
