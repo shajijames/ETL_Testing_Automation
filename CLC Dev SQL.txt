@@ -1,0 +1,47 @@
+CREATE TABLE ETL_TESTING_META_TABLE (
+    TableID int identity(1,1),
+    TargetDatabase varchar(50),
+    TargetSchema varchar(20),
+    TargetTable varchar(MAX),
+    SourceDatabase varchar(50),
+    SourceSchema varchar(20),
+	SourceExtract varchar(MAX),
+	PrimaryKeys varchar(255),
+	GroupingColumn varchar(255),
+	TestFlag varchar(10) default 'TRUE'
+);
+
+
+CREATE TABLE ETL_TESTING_LOG_TABLE
+(
+                test_id VARCHAR(200),
+                table_name VARCHAR(200),
+                start_time DATETIME,
+                execution_status VARCHAR(50),
+                end_time DATETIME,
+                test_result VARCHAR(100),
+                mismatch_count INTEGER,
+                mismatch_path VARCHAR(1000),
+                log_path VARCHAR(1000)
+)
+
+
+-- FACT_INVOICE
+select distinct b.ShipName, b.ShipAddress, b.ShipCity, b.ShipRegion, b.ShipPostalCode, b.ShipCountry, b.CustomerID, c.CompanyName, c.Address, c.City, c.Region, c.PostalCode, c.Country, concat(d.FirstName, ' ', d.LastName) as Salesperson, b.OrderID, b.OrderDate, b.RequiredDate, b.ShippedDate, e.ProductID, f.ProductName, e.UnitPrice, e.Quantity, e.Discount, e.UnitPrice * e.Quantity * (1 - e.Discount) as ExtendedPrice, b.Freight from Northwind.dbo.Shippers a inner join Northwind.dbo.Orders b on a.ShipperID = b.ShipVia inner join Northwind.dbo.Customers c on c.CustomerID = b.CustomerID inner join Northwind.dbo.Employees d on d.EmployeeID = b.EmployeeID inner join Northwind.dbo.Order_Details e on b.OrderID = e.OrderID inner join Northwind.dbo.Products f on f.ProductID = e.ProductID;
+-- OrderID,ProductID
+
+
+-- FACT_ORDER_DETAILS_EXTENDED
+select distinct y.OrderID, y.ProductID, x.ProductName, y.UnitPrice, y.Quantity, y.Discount, round(y.UnitPrice * y.Quantity * (1 - y.Discount), 2) as ExtendedPrice from Northwind.dbo.Products x inner join Northwind.dbo.Order_Details y on x.ProductID = y.ProductID;
+-- OrderID,ProductID
+
+
+-- DIM_PRODUCTS
+select distinct b.*, a.CategoryName from Northwind.dbo.Categories a inner join Northwind.dbo.Products b on a.CategoryID = b.CategoryID;
+-- ProductID
+
+
+-- DIM_DEMOGRAPHY
+select a.TerritoryID,a.TerritoryDescription,a.RegionID,b.RegionDescription from Northwind.dbo.Territories a left join Northwind.dbo.Region b on a.RegionID=b.RegionID;
+-- TerritoryID
+
